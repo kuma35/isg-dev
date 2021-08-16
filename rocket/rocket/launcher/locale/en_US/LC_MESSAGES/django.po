@@ -1,0 +1,51 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-03-08 17:33+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: controlPad.html:6
+msgid "live camera for iron-sky-girl - control pad"
+msgstr ""
+
+#: controlPad.html:14
+msgid "commmand"
+msgstr ""
+
+#: controlPad.html:20
+msgid "max turn left, and max tilt down"
+msgstr ""
+
+#: controlPad.html:21
+msgid "centering"
+msgstr ""
+
+#: controlPad.html:23
+msgid "syntax"
+msgstr ""
+
+#: controlPad.html:24
+msgid "you can set muliple commands. command separate by space."
+msgstr ""
+
+#: controlPad.html:25
+msgid "サンプル"
+msgstr "Sample"
+
+#: controlPad.html:29
+msgid ""
+"センタリング(c)し、左旋回(l)コマンド4回、仰角アップ(u)コマンド3回実行します。"
+msgstr "centering(c), turn left x 4 and tilt up x 3"
