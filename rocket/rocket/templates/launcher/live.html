@@ -1,0 +1,20 @@
+{% extends "launcher/launcher_skelton.html" %}
+
+{% block title %}ライブ - 鉄空小娘ライブカメラ{% endblock title %}
+{% block body %}
+<!-- {{ msg }} -->
+<p>
+{% if is_motion_jpeg %}
+<img src="/stream/?action=stream"/>
+{% else %}
+<applet code="com.charliemouse.cambozola.Viewer" archive="/stream/cambozola.jar" width="{{ width }}" height="{{ height }}">
+  <param name="url" value="/stream/?action=stream"/>
+  <param name="accessorystyle" value="overlay"/>
+  <param name="width" value="{{ width }}"/>
+  <param name="height" value="{{ height }}"/>
+</applet>
+{% endif %}
+</p>
+{% endblock body %}
+
+

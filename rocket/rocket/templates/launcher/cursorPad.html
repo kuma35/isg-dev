@@ -1,0 +1,72 @@
+{% extends "launcher/launcher_skelton.html" %}
+{% load i18n %}
+{% block title %}cursor pad - 鉄空小娘ライブカメラ{% endblock title %}
+{% block javascript %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script>
+$(function(){
+  cameraPanTilt = function(selecter, cmd) {
+    $(selecter).click(
+      function() {
+        $(selecter).attr("disabled", "disabled")
+        $.ajax({
+        type: "GET",
+        url: "launcher/ctrl/"+cmd,
+        data: {},
+        dataType: "json",
+        success: function(response) {
+          $(selecter).removeAttr("disabled")
+        }
+      })
+    })
+  }
+  cameraPanTilt('#launcher_tilt_up', 'u')
+  cameraPanTilt('#launcher_tilt_down', 'd')
+  cameraPanTilt('#launcher_pan_left', 'l')
+  cameraPanTilt('#launcher_pan_right', 'r')
+  cameraPanTilt('#launcher_center', 'c')
+  cameraPanTilt('#launcher_reset', 'reset')
+})
+</script>
+{% endblock javascript %}
+{% block body %}
+<table>
+ <tr>
+  <td>
+   {# <input type="button"/> #}
+  </td>
+  <td align="center">
+   <input type="button" name="up" value="up" id="launcher_tilt_up"/>
+  </td>
+  <td>
+   {# <input type="button"/> #}
+  </td>
+ </tr>
+ <tr>
+  <td>
+   <input type="button" name="left" value="left" id="launcher_pan_left"/>
+  </td>
+  <td>
+   {# <input type="button"/> #}
+  </td>
+  <td>
+   <input type="button" name="right" value="right" id="launcher_pan_right"/>
+  </td>
+ </tr>
+ <tr>
+  <td>
+   {# <input type="button"/> #}
+  </td>
+  <td>
+   <input type="button" name="down" value="down" id="launcher_tilt_down"/>
+  </td>
+  <td>
+   {# <input type="button"/> #}
+  </td>
+ </tr>
+</table>
+<input type="button" name="center" value="center" id="launcher_center"/>
+<input type="button" name="reset" value="reset" id="launcher_reset"/>
+{% endblock body %}
+
+

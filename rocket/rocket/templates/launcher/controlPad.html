@@ -1,0 +1,28 @@
+{% extends "launcher/launcher_skelton.html" %}
+{% load i18n %}
+{% block title %}control pad - -鉄空小娘ライブカメラ{% endblock title %}
+{% block body %}
+<form action="/rocket/launcher/pad" method="POST">
+{{ command_form.as_p }}
+<input type="submit" value="Submit"></form>
+<p>{{ msg }}</p>
+<hr/>
+<h2>{% trans "コマンド" %}</h2>
+<dl>
+<dt>l</dt><dd>left</dd>
+<dt>r</dt><dd>righit</dd>
+<dt>u</dt><dd>up</dd>
+<dt>d</dt><dd>down</dd>
+<dt>reset</dt><dd>{% trans "左に回しきり、仰角を最小にする" %}</dd>
+<dt>c</dt><dd>{% trans "センタリング(reset後、右に回しきって左右のセンターへ左旋回する。また、仰角最大後、半分戻す。" %}</dd>
+</dl>
+<h2>{% trans "文法" %}</h2>
+<p>{% trans "スペースで区切って複数のコマンドを同時に記述できます。" %}</p>
+<h3>{% trans "サンプル" %}</h3>
+<code>
+c l l l l u u u 
+</code>
+<p>{% trans "センタリング(c)し、左旋回(l)コマンド4回、仰角アップ(u)コマンド3回実行します。" %}</p>
+{% endblock body %}
+
+
