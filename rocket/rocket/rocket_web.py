@@ -4,7 +4,7 @@
 from time import sleep
 import fcntl
 import errno
-from rocket.launcher.rocket_backend import RocketManager
+from rocket.rocket_backend import RocketManager
 
 
 class CanNotGetRocketManager(Exception) :

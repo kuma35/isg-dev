@@ -1,4 +1,4 @@
-{% extends "launcher/launcher_skelton.html" %}
+{% extends "launcher_skelton.html" %}
 
 {% block title %}ライブ - 鉄空小娘ライブカメラ{% endblock title %}
 {% block javascript %}
@@ -11,7 +11,7 @@ $(function(){
         $(selecter).attr("disabled", "disabled")
         $.ajax({
         type: "GET",
-        url: "/launcher/ctrl/"+cmd,
+        url: "ctrl/"+cmd,
         data: {},
         dataType: "json",
         success: function(response) {
@@ -93,5 +93,3 @@ $(function(){
 </tr>
 </table>
 {% endblock body %}
-
-

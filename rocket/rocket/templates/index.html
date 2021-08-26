@@ -1,4 +1,4 @@
-{% extends "launcher/launcher_skelton.html" %}
+{% extends "launcher_skelton.html" %}
 
 {% block title %}鉄空小娘ライブカメラ{% endblock title %}
 {% block body %}
@@ -7,12 +7,12 @@
 {# <p>ライブカメラを構築しました。日照・照明によって変わる表情をお楽しみ下さい。</p> #}
 {# <p>カメラ位置等のリクエストは 2chスレ「【等身大】ファンタスティック Part.21【ﾌｨｷﾞｭｱ】」あたりで</p> #}
 <h1>メニュー</h1>
-<h2><a href="launcher/live">ライブを見る(カメラの向きを変える)</a></h2>
+<h2><a href="{% url 'live' %}">ライブを見る(カメラの向きを変える)</a></h2>
 <p>ライブを閲覧します。また、カメラを左右方向上下方向に振る事ができます。</p>
 <h2><a href="/stream/?action=snapshot" target="_blank">スナップショット(別窓)</a></h2>
 <p>現時点でのスナップショット(JPEG画像)を別窓で開きます</p>
 <p>保存したいときはブラウザで「名前を付けて保存」等して下さい。</p>
-{# <h2><a href="launcher/snapshot2" target="_blank">Camera2スナップショット(臨時)</a></h2> #}
+{# <h2><a href="{% url 'snapshot2' %}" target="_blank">Camera2スナップショット(臨時)</a></h2> #}
 {# <h2><a href="/cam2/?action=snapshot" target="_blank">Camera2スナップショット(臨時)</a></h2> #}
 {# <h2><a href="http://picasaweb.google.com/iron.sky.girl" target="photos">picasa ウェブ アルバム(別窓)</a></h2> #}
 {# <p>過去の画像をPicasa web albumで閲覧します</p> #}

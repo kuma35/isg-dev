@@ -8,9 +8,7 @@
 </head>
 <body>
 <nav>
-{# <a href="/">TOP</a>&nbsp;|&nbsp;<a href="/launcher/live">ライブを見る(カメラの向きを変える)</a>&nbsp;|&nbsp;<a href="/stream/?action=snapshot" target="_blank">スナップショット(別窓)</a>&nbsp;|&nbsp;<a href="http://picasaweb.google.com/iron.sky.girl" target="photos">picasa ウェブ アルバム(別窓)|&nbsp;<a href="/launcher/snapshot2" target="_blank">Cam2 snapshot</a> #}
-{# <a href="/">TOP</a>&nbsp;|&nbsp;<a href="/launcher/live">ライブを見る(カメラの向きを変える)</a>&nbsp;|&nbsp;<a href="/stream/?action=snapshot" target="_blank">スナップショット(別窓)</a>&nbsp;|&nbsp;<a href="http://picasaweb.google.com/iron.sky.girl" target="photos">picasa ウェブ アルバム(別窓)|&nbsp;<a href="/cam2/?action=snapshot" target="_blank">Cam2 snapshot</a> #}
-<a href="top/">TOP</a>&nbsp;|&nbsp;<a href="/launcher/live">ライブを見る(カメラの向きを変える)</a>&nbsp;|&nbsp;<a href="/stream/?action=snapshot" target="_blank">スナップショット(別窓)</a>
+<a href="{% url 'top' %}">TOP</a>&nbsp;|&nbsp;<a href="{% url 'live' %}">ライブを見る(カメラの向きを変える)</a>&nbsp;|&nbsp;<a href="/stream/?action=snapshot" target="_blank">スナップショット(別窓)</a>
 </nav>
 <hr>
 {% block body %}

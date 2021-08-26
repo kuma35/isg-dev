@@ -1,4 +1,4 @@
-{% extends "launcher/launcher_skelton.html" %}
+{% extends "launcher_skelton.html" %}
 {% load i18n %}
 {% block title %}cursor pad - 鉄空小娘ライブカメラ{% endblock title %}
 {% block javascript %}
@@ -11,7 +11,7 @@ $(function(){
         $(selecter).attr("disabled", "disabled")
         $.ajax({
         type: "GET",
-        url: "launcher/ctrl/"+cmd,
+        url: "ctrl/"+cmd,
         data: {},
         dataType: "json",
         success: function(response) {
@@ -68,5 +68,3 @@ $(function(){
 <input type="button" name="center" value="center" id="launcher_center"/>
 <input type="button" name="reset" value="reset" id="launcher_reset"/>
 {% endblock body %}
-
-

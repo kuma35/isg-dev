@@ -14,11 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import path, path, include
-from rocket.launcher import views
+from django.urls import path, re_path
+from . import views
 
 urlpatterns = [
-    path('launcher/', include('rocket.launcher.urls')),
-    path('top/', views.index),
+    re_path('^pad2$', views.cursorPad, name='pad2'),
+    re_path('^pad$', views.controlPad, name='pad'),
+    re_path('^live$', views.liveStream, name='live'),
+    re_path('^ctrl/(?P<cmd>[0-9A-z]+)$', views.controlCommand),
+    re_path('^snapshot2$', views.snapshot2, name='snapshot2'),
+    re_path('^snapshot$', views.snapshot, name='snapshot'),
+    path('top/', views.index, name='top'),
     path('', views.index),  # fault route
 ]

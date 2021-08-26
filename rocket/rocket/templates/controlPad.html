@@ -1,8 +1,8 @@
-{% extends "launcher/launcher_skelton.html" %}
+{% extends "launcher_skelton.html" %}
 {% load i18n %}
 {% block title %}control pad - -鉄空小娘ライブカメラ{% endblock title %}
 {% block body %}
-<form action="/rocket/launcher/pad" method="POST">
+<form action="{% url 'pad' %}" method="POST">
 {{ command_form.as_p }}
 <input type="submit" value="Submit"></form>
 <p>{{ msg }}</p>
@@ -24,5 +24,3 @@ c l l l l u u u
 </code>
 <p>{% trans "センタリング(c)し、左旋回(l)コマンド4回、仰角アップ(u)コマンド3回実行します。" %}</p>
 {% endblock body %}
-
-

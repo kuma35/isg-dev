@@ -4,8 +4,8 @@ import re
 from django.template import Context, loader
 from django.http import HttpResponse
 import json
-from rocket.launcher.forms import CommandForm, SizeForm
-from rocket.launcher.rocket_web import RocketCommander, CanNotGetRocketManager
+from rocket.forms import CommandForm, SizeForm
+from rocket.rocket_web import RocketCommander, CanNotGetRocketManager
 
 def index(request) :
     msg = ""
@@ -27,7 +27,7 @@ def index(request) :
     elif nowWidth < minWidth :
         nowWidth = minWidth
     nowHeight = int(float(maxHeight) * (float(nowWidth) / float(maxWidth)))
-    template = loader.get_template('launcher/index.html')
+    template = loader.get_template('index.html')
     #msg += "nowWidth=%d, nowHeight=%d"%(nowWidth, nowHeight)
     context = {
         'size_form' : form,
@@ -56,7 +56,7 @@ def controlPad(request) :
             msg += "request not valid."
     else :
         form = CommandForm() # An unbound form
-    template = loader.get_template('launcher/controlPad.html')
+    template = loader.get_template('controlPad.html')
     context = {
         'command_form' : form,
         'msg' : msg, }
@@ -105,8 +105,8 @@ def liveStream(request) :
     elif nowWidth < minWidth :
         nowWidth = minWidth
     nowHeight = int(float(maxHeight) * (float(nowWidth) / float(maxWidth)))
-    #t = loader.get_template('launcher/live.html')
-    template = loader.get_template('launcher/live2.html')
+    #t = loader.get_template('live.html')
+    template = loader.get_template('live2.html')
     #msg += "nowWidth=%d, nowHeight=%d"%(nowWidth, nowHeight)
     context = {
         'size_form' : form,
@@ -118,7 +118,7 @@ def liveStream(request) :
 
 
 def cursorPad(request) :
-    template = loader.get_template('launcher/cursorPad.html')
+    template = loader.get_template('cursorPad.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
@@ -132,12 +132,12 @@ def controlCommand(request, cmd="") :
     return HttpResponse(json.dumps(data), "application/json")
 
 def snapshot(request) :
-    template = loader.get_template('launcher/snapshot.html')
+    template = loader.get_template('snapshot.html')
     context  = {}
     return HttpResponse(template.render(context, request))
 
 def snapshot2(request) :
-    template = loader.get_template('launcher/snapshot2.html')
+    template = loader.get_template('snapshot2.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
