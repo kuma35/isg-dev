@@ -7,137 +7,147 @@ import json
 from rocket.forms import CommandForm, SizeForm
 from rocket.rocket_web import RocketCommander, CanNotGetRocketManager
 
-def index(request) :
+
+def index(request):
     msg = ""
     maxWidth = 1280
     maxHeight = 720
-    minWidth  = 320
+    minWidth = 320
     nowWidth = 1280
     if request.method == 'POST':
         form = SizeForm(request.POST)
-        if form.is_valid(): # All validation rules pass
+        if form.is_valid():  # All validation rules pass
             nowWidth = int(form.cleaned_data['size'])
-            #msg += "selected size %s"%(nowWidth)
-        else :
+            # msg += "selected size %s"%(nowWidth)
+        else:
             msg += "invalid data"
-    else :
-        form = SizeForm({'size':nowWidth}) # An unbound form
-    if nowWidth > maxWidth :    # 文字列比較になっていたので数値比較になるようnowWidthをint()で型変換
+    else:
+        form = SizeForm({'size': nowWidth})  # An unbound form
+    if nowWidth > maxWidth:
+        # 文字列比較になっていたので数値比較になるよう
+        # nowWidthをint()で型変換
         nowWidth = maxWidth
-    elif nowWidth < minWidth :
+    elif nowWidth < minWidth:
         nowWidth = minWidth
     nowHeight = int(float(maxHeight) * (float(nowWidth) / float(maxWidth)))
     template = loader.get_template('index.html')
-    #msg += "nowWidth=%d, nowHeight=%d"%(nowWidth, nowHeight)
+    # msg += "nowWidth=%d, nowHeight=%d"%(nowWidth, nowHeight)
     context = {
-        'size_form' : form,
-        'width' : nowWidth,
+        'size_form': form,
+        'width': nowWidth,
         'height': nowHeight,
-        'msg':msg, }
+        'msg': msg, }
     return HttpResponse(template.render(context, request))
 
 
-def controlPad(request) :
+def controlPad(request):
     msg = ""
     if request.method == 'POST':
         form = CommandForm(request.POST)
         commandLine = ''
-        if form.is_valid(): # All validation rules pass
+        if form.is_valid():  # All validation rules pass
             commandLine = form.cleaned_data['command']
             commander = None
-            try :
+            try:
                 commander = RocketCommander()
-            except CanNotGetRocketManager as e :
+            except CanNotGetRocketManager as e:
                 print(e)
-            else :
+            else:
                 result = commander.interpret(commandLine)
                 msg += " ".join(result['msg'])
-        else :
+        else:
             msg += "request not valid."
-    else :
-        form = CommandForm() # An unbound form
+    else:
+        form = CommandForm()  # An unbound form
     template = loader.get_template('controlPad.html')
     context = {
-        'command_form' : form,
-        'msg' : msg, }
+        'command_form': form,
+        'msg': msg, }
     return HttpResponse(template.render(context, request))
 
 
-def _getBrowser(userAgent) :
+def _getBrowser(userAgent):
     reChrome = re.compile("Chrome")
     reFirefox = re.compile("Firefox")
     reOpera = re.compile("Opera")
     maChrome = reChrome.search(userAgent)
-    if maChrome :
+    if maChrome:
         return 'chrome'
     maFireFox = reFirefox.search(userAgent)
-    if maFireFox :
+    if maFireFox:
         return 'firefox'
     maOpera = reOpera.search(userAgent)
-    if maOpera :
+    if maOpera:
         return 'opera'
     return 'other'
 
 
-def liveStream(request) :
+def liveStream(request):
     msg = ""
     maxWidth = 1280
     maxHeight = 720
-    minWidth  = 320
+    minWidth = 320
     nowWidth = 1280
     isMotionJpeg = False
     browserType = _getBrowser(request.META['HTTP_USER_AGENT'])
     msg += "useragent[%s],browserType=[%s]"%(request.META['HTTP_USER_AGENT'], browserType)
-    #if browserType == 'chrome' or browserType == 'firefox' or browserType == 'opera' :
-    if browserType == 'chrome' or browserType == 'firefox' :    # operaではmotion jpegは動かなかった。
+    # if browserType == 'chrome' or
+    #    browserType == 'firefox' or
+    #    browserType == 'opera':
+    if browserType == 'chrome' or browserType == 'firefox':
+        # operaではmotion jpegは動かなかった。
         isMotionJpeg = True
     if request.method == 'POST':
         form = SizeForm(request.POST)
-        if form.is_valid(): # All validation rules pass
+        if form.is_valid():  # All validation rules pass
             nowWidth = int(form.cleaned_data['size'])
-            #msg += "selected size %s"%(nowWidth)
-        else :
+            # msg += "selected size %s"%(nowWidth)
+        else:
             msg += "invalid data"
-    else :
-        form = SizeForm({'size':nowWidth}) # An unbound form
-    if nowWidth > maxWidth :    # 文字列比較になっていたので数値比較になるようnowWidthをint()で型変換
+    else:
+        form = SizeForm({'size': nowWidth})  # An unbound form
+    if nowWidth > maxWidth:
+        # 文字列比較になっていたので数値比較になるよう
+        # nowWidthをint()で型変換
         nowWidth = maxWidth
-    elif nowWidth < minWidth :
+    elif nowWidth < minWidth:
         nowWidth = minWidth
     nowHeight = int(float(maxHeight) * (float(nowWidth) / float(maxWidth)))
-    #t = loader.get_template('live.html')
+    # t = loader.get_template('live.html')
     template = loader.get_template('live2.html')
-    #msg += "nowWidth=%d, nowHeight=%d"%(nowWidth, nowHeight)
+    # msg += "nowWidth=%d, nowHeight=%d"%(nowWidth, nowHeight)
     context = {
-        'size_form' : form,
-        'width' : nowWidth,
+        'size_form': form,
+        'width': nowWidth,
         'height': nowHeight,
-        'msg':msg,
-        'is_motion_jpeg' : isMotionJpeg, }
+        'msg': msg,
+        'is_motion_jpeg': isMotionJpeg, }
     return HttpResponse(template.render(context, request))
 
 
-def cursorPad(request) :
+def cursorPad(request):
     template = loader.get_template('cursorPad.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
-def controlCommand(request, cmd="") :
-    try :
+
+def controlCommand(request, cmd=""):
+    try:
         commander = RocketCommander()
-    except CanNotGetRocketManager as e :
+    except CanNotGetRocketManager as e:
         print(e)
-    else :
+    else:
         data = commander.interpret(cmd)
     return HttpResponse(json.dumps(data), "application/json")
 
-def snapshot(request) :
-    template = loader.get_template('snapshot.html')
-    context  = {}
-    return HttpResponse(template.render(context, request))
 
-def snapshot2(request) :
-    template = loader.get_template('snapshot2.html')
+def snapshot(request):
+    template = loader.get_template('snapshot.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
+
+def snapshot2(request):
+    template = loader.get_template('snapshot2.html')
+    context = {}
+    return HttpResponse(template.render(context, request))

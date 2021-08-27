@@ -1,7 +1,9 @@
 from django import forms
 
+
 class CommandForm(forms.Form):
     command = forms.CharField(max_length=256)
+
 
 class SizeForm(forms.Form):
     size = forms.ChoiceField(choices=[(1280, "1280x720"),
