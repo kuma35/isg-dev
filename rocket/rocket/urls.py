@@ -18,12 +18,13 @@ from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
-    re_path('^pad2$', views.cursorPad, name='pad2'),
-    re_path('^pad$', views.controlPad, name='pad'),
-    re_path('^live$', views.liveStream, name='live'),
-    re_path('^ctrl/(?P<cmd>[0-9A-z]+)$', views.controlCommand),
-    re_path('^snapshot2$', views.snapshot2, name='snapshot2'),
-    re_path('^snapshot$', views.snapshot, name='snapshot'),
+    path('pad2/', views.cursorPad, name='pad2'),
+    path('pad/', views.controlPad, name='pad'),
+    # re_path('^ctrl/(?P<cmd>[0-9A-z]+)$', views.controlCommand),
+    re_path('live/ctrl/(?P<cmd>[0-9A-z]+)$', views.controlCommand),
+    path('live/', views.liveStream, name='live'),
+    path('snapshot2/', views.snapshot2, name='snapshot2'),
+    path('snapshot/', views.snapshot, name='snapshot'),
     path('top/', views.index, name='top'),
     path('', views.index),  # fault route
 ]
