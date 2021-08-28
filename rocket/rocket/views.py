@@ -132,10 +132,25 @@ def cursorPad(request):
 
 
 def controlCommand(request, cmd=""):
+    """recive command from client page and execute
+
+    special return code:
+
+    - -2 no connect launcher.
+    - "no connect"
+
+    :param request: request object
+    :param string cmd: command char
+    :return: return code andmsg to cliant page javascript
+    :rtype: HttpResponse object
+    """
+    data = {'code': [], 'msg': []}
     try:
         commander = RocketCommander()
-    except CanNotGetRocketManager as e:
-        print(e)
+    except CanNotGetRocketManager as err_msg:
+        print(err_msg)
+        data['code'].append(-2)
+        data['msg'].append("no connect")
     else:
         data = commander.interpret(cmd)
     return HttpResponse(json.dumps(data), "application/json")
