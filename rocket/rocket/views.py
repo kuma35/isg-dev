@@ -113,8 +113,7 @@ def liveStream(request):
     elif nowWidth < minWidth:
         nowWidth = minWidth
     nowHeight = int(float(maxHeight) * (float(nowWidth) / float(maxWidth)))
-    # t = loader.get_template('live.html')
-    template = loader.get_template('live2.html')
+    template = loader.get_template('live.html')
     # msg += "nowWidth=%d, nowHeight=%d"%(nowWidth, nowHeight)
     context = {
         'size_form': form,
