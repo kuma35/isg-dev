@@ -9,38 +9,15 @@ from rocket.rocket_web import RocketCommander, CanNotGetRocketManager
 
 
 def index(request):
-    msg = ""
-    maxWidth = 1280
-    maxHeight = 720
-    minWidth = 320
-    nowWidth = 1280
-    if request.method == 'POST':
-        form = SizeForm(request.POST)
-        if form.is_valid():  # All validation rules pass
-            nowWidth = int(form.cleaned_data['size'])
-            # msg += "selected size %s"%(nowWidth)
-        else:
-            msg += "invalid data"
-    else:
-        form = SizeForm({'size': nowWidth})  # An unbound form
-    if nowWidth > maxWidth:
-        # 文字列比較になっていたので数値比較になるよう
-        # nowWidthをint()で型変換
-        nowWidth = maxWidth
-    elif nowWidth < minWidth:
-        nowWidth = minWidth
-    nowHeight = int(float(maxHeight) * (float(nowWidth) / float(maxWidth)))
+    """display index page"""
+    msg = ""  #  debug message if you need.
     template = loader.get_template('index.html')
-    # msg += "nowWidth=%d, nowHeight=%d"%(nowWidth, nowHeight)
-    context = {
-        'size_form': form,
-        'width': nowWidth,
-        'height': nowHeight,
-        'msg': msg, }
+    context = {'msg': msg, }
     return HttpResponse(template.render(context, request))
 
 
 def controlPad(request):
+    """recive from client javascript sent data"""
     msg = ""
     if request.method == 'POST':
         form = CommandForm(request.POST)
@@ -67,6 +44,7 @@ def controlPad(request):
 
 
 def _getBrowser(userAgent):
+    """get client browser type"""
     reChrome = re.compile("Chrome")
     reFirefox = re.compile("Firefox")
     reOpera = re.compile("Opera")
@@ -83,48 +61,23 @@ def _getBrowser(userAgent):
 
 
 def liveStream(request):
+    """for live page."""
     msg = ""
-    maxWidth = 1280
-    maxHeight = 720
-    minWidth = 320
-    nowWidth = 1280
     isMotionJpeg = False
     browserType = _getBrowser(request.META['HTTP_USER_AGENT'])
     msg += "useragent[%s],browserType=[%s]"%(request.META['HTTP_USER_AGENT'], browserType)
-    # if browserType == 'chrome' or
-    #    browserType == 'firefox' or
-    #    browserType == 'opera':
     if browserType == 'chrome' or browserType == 'firefox':
         # operaではmotion jpegは動かなかった。
         isMotionJpeg = True
-    if request.method == 'POST':
-        form = SizeForm(request.POST)
-        if form.is_valid():  # All validation rules pass
-            nowWidth = int(form.cleaned_data['size'])
-            # msg += "selected size %s"%(nowWidth)
-        else:
-            msg += "invalid data"
-    else:
-        form = SizeForm({'size': nowWidth})  # An unbound form
-    if nowWidth > maxWidth:
-        # 文字列比較になっていたので数値比較になるよう
-        # nowWidthをint()で型変換
-        nowWidth = maxWidth
-    elif nowWidth < minWidth:
-        nowWidth = minWidth
-    nowHeight = int(float(maxHeight) * (float(nowWidth) / float(maxWidth)))
+
     template = loader.get_template('live.html')
-    # msg += "nowWidth=%d, nowHeight=%d"%(nowWidth, nowHeight)
-    context = {
-        'size_form': form,
-        'width': nowWidth,
-        'height': nowHeight,
-        'msg': msg,
-        'is_motion_jpeg': isMotionJpeg, }
+    context = {'msg': msg,
+               'is_motion_jpeg': isMotionJpeg, }
     return HttpResponse(template.render(context, request))
 
 
 def cursorPad(request):
+    """display cursorPad page. no use"""
     template = loader.get_template('cursorPad.html')
     context = {}
     return HttpResponse(template.render(context, request))
@@ -156,12 +109,14 @@ def controlCommand(request, cmd=""):
 
 
 def snapshot(request):
+    """snapshot page for /snapshot/"""
     template = loader.get_template('snapshot.html')
     context = {}
     return HttpResponse(template.render(context, request))
 
 
 def snapshot2(request):
+    """snapshot page for webcam2 /snapshot2/"""
     template = loader.get_template('snapshot2.html')
     context = {}
     return HttpResponse(template.render(context, request))
