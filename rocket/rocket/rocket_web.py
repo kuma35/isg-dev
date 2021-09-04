@@ -128,7 +128,7 @@ class RocketCommander:
         result = {'code': [], 'msg': []}
         self.commands = []
         commands = text.split(' ')
-        self.lockfd = file('/tmp/rocket.lock', 'w')
+        self.lockfd = open('/tmp/rocket.lock', 'w')
         try:
             fcntl.lockf(self.lockfd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             for command in commands:
