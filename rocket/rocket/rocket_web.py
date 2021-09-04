@@ -6,6 +6,13 @@ from rocket.rocket_backend import RocketManager
 
 
 class CanNotGetRocketManager(Exception):
+    """no connect launcher exception
+
+    USBミサイルランチャーが物理的に接続されていない時の例外
+
+    :return: raise時に渡されるデータ。通常はエラーメッセージ。
+    :rtype: maybe string
+    """
     def __init__(self, value):
         self.value = value
 
@@ -14,7 +21,10 @@ class CanNotGetRocketManager(Exception):
 
 
 class Turret:
-    # class shared var. with classname
+    """pan tilt turret
+
+    class shared var. with classname
+    """
     button_labels = ["Down", "Up", "Left", "Right", "_Fire"]
     time_pan = 0.0
     time_tilt = 0.0
@@ -118,11 +128,21 @@ class RocketCommander:
                 self.lockfd.close()
 
     def interpret(self, text):
-        """
-        result code:
-        -1;already locked
-        0;invalid command
-        1;done
+        """commands string parsing and command execute
+
+        複数のコマンドを含む字列をパースし、各コマンドを順番に実行。
+
+        return code,msg:
+
+        - -2:no connect
+        - -1;already locked
+        - 0;invalid command
+        - 1;done
+
+        :param string text: commands string
+        :return: command execute result codes and short messages
+        :rtype: dict[ code: [], msg: [] ]
+        :raises IOError: EACCES or EAGAIN
         """
         # print text
         result = {'code': [], 'msg': []}
