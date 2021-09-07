@@ -1,0 +1,9 @@
+[Unit]
+Description=MJPG-Streamer with /dev/video0.
+After=network.target
+After=udev.target
+
+[Service]
+ExecStart=/usr/local/bin/mjpg_streamer -i "/usr/local/lib/mjpg-streamer/input_uvc.so -d /dev/video0 -f 1 -r 1920x1080" -o "/usr/local/lib/mjpg-streamer/output_http.so -p 9999"
+
+
