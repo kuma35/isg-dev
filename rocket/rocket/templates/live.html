@@ -80,7 +80,7 @@ $(function(){
 </td>
 <td>
 {% if is_motion_jpeg %}
-<img src="/stream/?action=stream"/>
+<img width="100%" src="/stream/?action=stream"/>
 {% else %}
 <applet code="com.charliemouse.cambozola.Viewer" archive="/stream/cambozola.jar" width="{{ width }}" height="{{ height }}">
   <param name="url" value="/stream/?action=stream"/>
