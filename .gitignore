@@ -5,3 +5,4 @@ __pycache__/
 db-volumes/
 db.sqlite3
 venv
+docs/_build/doctrees

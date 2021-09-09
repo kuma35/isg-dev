@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>デプロイ &mdash; isg-dev 2.0 ドキュメント</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="prev" title="Welcome to isg-dev&#39;s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> isg-dev
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">デプロイ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">環境</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mod-wsgi">mod_wsgi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mjpg-streamer">mjpg-streamer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">リバースプロキシ設定</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#www-data">www-dataのパーミッション</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">isg-dev</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>デプロイ</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/deploy.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="id1">
+<h1>デプロイ<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>ご参考まで。</p>
+<div class="section" id="id2">
+<h2>環境<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<ul class="simple">
+<li><p>Ubuntu 20.04 LTS</p></li>
+<li><p>Python3.8</p></li>
+</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ pip show pyusb
+Name: pyusb
+Version: <span class="m">1</span>.2.1
+Summary: Python USB access module
+Home-page: https://pyusb.github.io/pyusb
+Author: Jonas Malaco
+Author-email: me@jonasmalaco.com
+License: UNKNOWN
+Location: /home/hideo/work/isg-dev/venv/lib/python3.8/site-packages
+Requires:
+Required-by:
+</pre></div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ apachectl -v
+Server version: Apache/2.4.41 <span class="o">(</span>Ubuntu<span class="o">)</span>
+Server built:   <span class="m">2021</span>-07-05T07:16:56
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>/home/hideo/work/isg-dev django開発フォルダ</p></li>
+<li><p>hideo:hideo</p></li>
+<li><p>/home/httpd/isg 公開用フォルダ</p></li>
+<li><p>chmod 775, hideo:www-data</p></li>
+</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>user hideoのまま<span class="o">)</span>
+<span class="nb">cd</span> /home/httpd
+git clone /home/hideo/work/isg-dev/ isg
+<span class="nb">cd</span> /home/httpd/isg
+python3 -m venv venv
+<span class="nb">source</span> ./venv/bin/activate
+pip install -U pip
+pip install -r /home/hideo/work/isg-dev/requirements.txt
+</pre></div>
+</div>
+</div>
+<div class="section" id="mod-wsgi">
+<h2>mod_wsgi<a class="headerlink" href="#mod-wsgi" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>pip inatall mod_wsgiでエラー</p>
+<p>apache2にapx2モジュールが必要だそうだ。</p>
+<p>aptにどのファイルがあるか調べる</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>apt install apt-file
+sudo apt-file update
+apt-file list apache2-dev <span class="p">|</span> grep apxs
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ apt-file list apache2-dev | grep apxs
+apache2-dev: /usr/bin/apxs
+apache2-dev: /usr/bin/apxs2
+apache2-dev: /usr/share/man/man1/apxs.1.gz
+apache2-dev: /usr/share/man/man1/apxs2.1.gz
+</pre></div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sudo apt install apache2-dev
+</pre></div>
+</div>
+<p>改めて pip install mod_wsgi</p>
+<p>アカン！！</p>
+<p>gccのincludeはさらっと -I/usr/include/python3.8 を指定してあるので、 aptで入れちゃえばいいようだ</p>
+<p>sudo apt install python3-dev</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ pip install mod_wsgi
+Collecting mod_wsgi
+Using cached mod_wsgi-4.9.0.tar.gz <span class="o">(</span><span class="m">497</span> kB<span class="o">)</span>
+Building wheels <span class="k">for</span> collected packages: mod-wsgi
+Building wheel <span class="k">for</span> mod-wsgi <span class="o">(</span>setup.py<span class="o">)</span> ... <span class="k">done</span>
+Created wheel <span class="k">for</span> mod-wsgi: <span class="nv">filename</span><span class="o">=</span>mod_wsgi-4.9.0-cp38-cp38-linux_x86_64.whl <span class="nv">size</span><span class="o">=</span><span class="m">827329</span> <span class="nv">sha256</span><span class="o">=</span>2eb654402cb314c4094f0c3fbff455fae0a84deade4184e346747bc70552b433
+Stored <span class="k">in</span> directory: /home/hideo/.cache/pip/wheels/a9/a6/a7/c3be00060a5c3ed82a95818622da34c34251c426f2872e6fbe
+Successfully built mod-wsgi
+Installing collected packages: mod-wsgi
+Successfully installed mod-wsgi-4.9.0
+</pre></div>
+</div>
+</div>
+<div class="section" id="mjpg-streamer">
+<h2>mjpg-streamer<a class="headerlink" href="#mjpg-streamer" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>持ってきて、make; sudo make install</p>
+<p>systemd用ファイル作成</p>
+</div>
+<div class="section" id="id3">
+<h2>リバースプロキシ設定<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>指定のポートで待ち受ける形になるので、これを /stream にアクセスしたら
+いいようにする。</p>
+<p>proxy.confを設定して、
+proxy.confと、proxy_http.conf を有効化する必要有る。(ここ重要)</p>
+</div>
+<div class="section" id="www-data">
+<h2>www-dataのパーミッション<a class="headerlink" href="#www-data" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>plugdevグループに属してないとUSBError access denied が出ます。</p>
+<p>isg.conf配置</p>
+<p>udev.rules.d設定</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to isg-dev&#39;s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, kuma35.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
