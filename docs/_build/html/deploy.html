@@ -92,9 +92,16 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">デプロイ</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id2">環境</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mod-wsgi">mod_wsgi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lifecam-hd-5000">マイクロソフト ウェブカメラ LifeCam HD-5000</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mjpg-streamer">mjpg-streamer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">リバースプロキシ設定</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#apache2-site-conf">apache2 site conf</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#www-data">www-dataのパーミッション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">アクセスログのタイムゾーンが+0000になる</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usb">USBミサイルランチャー</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rules">rulesファイルの読み込みが正しく行われているかチェック</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -169,10 +176,14 @@
 <p>ご参考まで。</p>
 <div class="section" id="id2">
 <h2>環境<a class="headerlink" href="#id2" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<ul class="simple">
-<li><p>Ubuntu 20.04 LTS</p></li>
-<li><p>Python3.8</p></li>
-</ul>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ uname -oprsv
+Linux <span class="m">5</span>.11.0-36-generic <span class="c1">#40~20.04.1-Ubuntu SMP Sat Sep 18 02:14:19 UTC 2021 x86_64 GNU/Linux</span>
+</pre></div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ python3 --version
+Python <span class="m">3</span>.8.10
+</pre></div>
+</div>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ pip show pyusb
 Name: pyusb
 Version: <span class="m">1</span>.2.1
@@ -210,29 +221,33 @@ pip install -r /home/hideo/work/isg-dev/requirements.txt
 </div>
 <div class="section" id="mod-wsgi">
 <h2>mod_wsgi<a class="headerlink" href="#mod-wsgi" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p>pip inatall mod_wsgiでエラー</p>
-<p>apache2にapx2モジュールが必要だそうだ。</p>
-<p>aptにどのファイルがあるか調べる</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>apt install apt-file
-sudo apt-file update
-apt-file list apache2-dev <span class="p">|</span> grep apxs
+<p>apache側のモジュールインストール</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo apt install libapache2-mod-wsgi-py3
 </pre></div>
 </div>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$ apt-file list apache2-dev | grep apxs
-apache2-dev: /usr/bin/apxs
+<p>django側でインストール...</p>
+<p>pip inatall mod_wsgiでエラー</p>
+<p>apache2にapx2モジュールが必要だそうだ。パッケージに含まれているファイルを確認。</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo apt install apt-file
+$ apt-file update
+$ apt-file list apache2-dev <span class="p">|</span> grep apxs
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>apache2-dev: /usr/bin/apxs
 apache2-dev: /usr/bin/apxs2
 apache2-dev: /usr/share/man/man1/apxs.1.gz
 apache2-dev: /usr/share/man/man1/apxs2.1.gz
 </pre></div>
 </div>
+<p>apxs2ありますね。apache2-devパッケージをインストールすればいいようです。</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sudo apt install apache2-dev
 </pre></div>
 </div>
 <p>改めて pip install mod_wsgi</p>
-<p>アカン！！</p>
-<p>gccのincludeはさらっと -I/usr/include/python3.8 を指定してあるので、 aptで入れちゃえばいいようだ</p>
-<p>sudo apt install python3-dev</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ pip install mod_wsgi
+<p>アカン！！ gccコンパイルでコケます。</p>
+<p>gccのincludeはさらっと -I/usr/include/python3.8 を指定してあるので、 aptで入れちゃえばいいようだ。</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo apt install python3-dev
+$ pip install mod_wsgi
 Collecting mod_wsgi
 Using cached mod_wsgi-4.9.0.tar.gz <span class="o">(</span><span class="m">497</span> kB<span class="o">)</span>
 Building wheels <span class="k">for</span> collected packages: mod-wsgi
@@ -244,24 +259,186 @@ Installing collected packages: mod-wsgi
 Successfully installed mod-wsgi-4.9.0
 </pre></div>
 </div>
+<p>やっと入りました。ふぅ。</p>
+</div>
+<div class="section" id="lifecam-hd-5000">
+<h2>マイクロソフト ウェブカメラ LifeCam HD-5000<a class="headerlink" href="#lifecam-hd-5000" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>/etc/udev/rules.d/ に 63-ms-hd5000.rules を作成。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># for MS LifeCam HD-5000
+ATTRS{idVendor}==&quot;045e&quot;,ATTRS{idProduct}==&quot;076d&quot;,KERNEL==&quot;video*&quot;,SYMLINK+=&quot;webcam1&quot;
+</pre></div>
+</div>
 </div>
 <div class="section" id="mjpg-streamer">
 <h2>mjpg-streamer<a class="headerlink" href="#mjpg-streamer" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p>持ってきて、make; sudo make install</p>
-<p>systemd用ファイル作成</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo apt install cmake libjpeg8-dev
+$ git clone https://github.com/jacksonliam/mjpg-streamer.git
+$ <span class="nb">cd</span> mjpg-streamer-experimental
+$ make
+</pre></div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ /usr/local/bin/mjpg_streamer --version
+MJPG Streamer Version: 310b29f4a94c46652b20c4b7b6e5cf24e532af39
+</pre></div>
+</div>
+<p>systemd用ファイル作成 /etc/systemd/system/mjpg-streamer.service</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">MJPG-Streamer with /dev/video0.</span>
+<span class="na">After</span><span class="o">=</span><span class="s">network.target</span>
+<span class="na">After</span><span class="o">=</span><span class="s">udev.target</span>
+
+<span class="k">[Service]</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/local/bin/mjpg_streamer -i &quot;/usr/local/lib/mjpg-streamer/input_uvc.so -d /dev/video0 -f 1 -r 1920x1080&quot; -o &quot;/usr/local/lib/mjpg-streamer/output_http.so -p 9999&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sudo systemctl <span class="nb">enable</span> mjpg-streamer
+sudo systemctl start mjpg-streamer
+</pre></div>
+</div>
 </div>
 <div class="section" id="id3">
 <h2>リバースプロキシ設定<a class="headerlink" href="#id3" title="このヘッドラインへのパーマリンク">¶</a></h2>
-<p>指定のポートで待ち受ける形になるので、これを /stream にアクセスしたら
+<p>mjpg-streamerは指定のポートで待ち受ける形になるので、これを /stream にアクセスしたら
 いいようにする。</p>
 <p>proxy.confを設定して、
-proxy.confと、proxy_http.conf を有効化する必要有る。(ここ重要)</p>
+proxyと、proxy_http を有効化する必要有る。(proxy_http ここ重要)</p>
+<p>proxy_httpは特にconfファイルいじる必要ないが、必要。</p>
+<p>proxy.conf</p>
+<div class="highlight-apacheconf notranslate"><div class="highlight"><pre><span></span><span class="nb">ProxyRequests</span> <span class="k">Off</span>
+<span class="nt">&lt;Proxy</span> <span class="s">*</span><span class="nt">&gt;</span>
+    <span class="nb">Require</span> <span class="k">all</span> granted
+<span class="nt">&lt;/Proxy&gt;</span>
+<span class="nb">ProxyPass</span> <span class="sx">/stream</span> http://127.0.0.1:9999
+<span class="nb">ProxyVia</span> <span class="k">On</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="apache2-site-conf">
+<h2>apache2 site conf<a class="headerlink" href="#apache2-site-conf" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>sites-available/isg.conf</p>
+<div class="highlight-apacheconf notranslate"><div class="highlight"><pre><span></span><span class="nb">LoadModule</span> wsgi_module <span class="s2">&quot;/home/httpd/isg/venv/lib/python3.8/site-packages/mod_wsgi/server/mod_wsgi-py38.cpython-38-x86_64-linux-gnu.so&quot;</span>
+<span class="nb">WSGIPythonHome</span> <span class="sx">/home/httpd/isg/venv</span>
+<span class="nb">WSGIPythonPath</span> <span class="sx">/home/httpd/isg</span>:/home/httpd/isg/venv/lib/python3.8/site-packages
+
+<span class="nt">&lt;VirtualHost</span> <span class="s">*:80</span><span class="nt">&gt;</span>
+    <span class="nb">ErrorLog</span> ${APACHE_LOG_DIR}/error.log
+    <span class="nb">CustomLog</span> ${APACHE_LOG_DIR}/access.log combined
+
+    <span class="nb">ServerName</span> sindobook.ddns.net
+
+    <span class="nb">DocumentRoot</span> <span class="sx">/home/httpd/isg/html</span>
+    <span class="nt">&lt;Directory</span> <span class="s">/home/httpd/isg/html</span><span class="nt">&gt;</span>
+        <span class="nb">Require</span> <span class="k">all</span> granted
+    <span class="nt">&lt;/Directory&gt;</span>
+
+    <span class="nb">WSGIApplicationGroup</span> %{GLOBAL}
+    <span class="nb">WSGIScriptAlias</span> <span class="sx">/rocket</span> <span class="sx">/home/httpd/isg/rocket/rocket/wsgi.py</span>
+    <span class="nt">&lt;Directory</span> <span class="s">/home/httpd/isg/rocket/rocket</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Files</span> <span class="s">wsgi.py</span><span class="nt">&gt;</span>
+            <span class="nb">Require</span> <span class="k">all</span> granted
+        <span class="nt">&lt;/Files&gt;</span>
+    <span class="nt">&lt;/Directory&gt;</span>
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</pre></div>
+</div>
+<p>LoadModule wsgi_module ... してるのでapache再起動、roloadでは既にロード済警告が出るが実用上問題無い。</p>
+<p>ServerNameを指定してあるが、VirtualHost設定はコレだけであるので(名前解決できず)LANからIPアドレス指定で
+アクセスしても結局ココにくる。</p>
+<p>djangoでprint()しちゃったメッセージはerror.logにwsgi errorとして出力される。将来的にはちゃんとloggingするかもしれない。</p>
 </div>
 <div class="section" id="www-data">
 <h2>www-dataのパーミッション<a class="headerlink" href="#www-data" title="このヘッドラインへのパーマリンク">¶</a></h2>
 <p>plugdevグループに属してないとUSBError access denied が出ます。</p>
 <p>isg.conf配置</p>
 <p>udev.rules.d設定</p>
+</div>
+<div class="section" id="id4">
+<h2>アクセスログのタイムゾーンが+0000になる<a class="headerlink" href="#id4" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>django絡み(wsgi絡み)のログは、
+djangoのsettings.pyでTZがUTCになっていた。
+'Asia/Tokyo'に修正。</p>
+<p>それ以外はシステムの設定が'Asia/Tokyo'(+0900)であるので
+Apacheもそれを引き継いで +0900 で出力する。</p>
+<p>Apache独自で設定したい場合は、envvarsに</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">TZ</span><span class="o">=</span><span class="s1">&#39;Pacific/Honolulu&#39;</span>
+</pre></div>
+</div>
+<p>とか設定する。(手元の環境ではPC再起動しないと反映されないことがあった)
+通常はTZの設定そのものが不要。
+TZに設定する値が知りたい時は、 tzselect を実行。</p>
+</div>
+<div class="section" id="usb">
+<h2>USBミサイルランチャー<a class="headerlink" href="#usb" title="このヘッドラインへのパーマリンク">¶</a></h2>
+<p>/etc/udev/rules.d/40-rocketlauncher.rules</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">SUBSYSTEM</span><span class="o">=</span><span class="s">=&quot;usb&quot;, ACTION==&quot;add&quot;, ATTR{idVendor}==&quot;1941&quot;, ATTR{idProduct}==&quot;8021&quot;, GROUP=&quot;plugdev&quot;, MODE=&quot;0660&quot;</span>
+<span class="na">SUBSYSTEM</span><span class="o">=</span><span class="s">=&quot;usb&quot;, ACTION==&quot;add&quot;, ATTR{idVendor}==&quot;0a81&quot;, ATTR{idProduct}==&quot;0701&quot;, GROUP=&quot;plugdev&quot;, MODE=&quot;0660&quot;</span>
+<span class="na">SUBSYSTEM</span><span class="o">=</span><span class="s">=&quot;usb&quot;, ACTION==&quot;add&quot;, ATTR{idVendor}==&quot;1130&quot;, ATTR{idProduct}==&quot;0202&quot;, GROUP=&quot;plugdev&quot;, MODE=&quot;0660&quot;</span>
+</pre></div>
+</div>
+<p>今回使うのは ATTR{idVendor}==&quot;0a81&quot;, ATTR{idProduct}==&quot;0701&quot; のものです。</p>
+<div class="section" id="rules">
+<h3>rulesファイルの読み込みが正しく行われているかチェック<a class="headerlink" href="#rules" title="このヘッドラインへのパーマリンク">¶</a></h3>
+<p>当初の/etc/udev/rules.d/40-rocketlauncher.rules</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">SUBSYSTEM</span><span class="o">=</span><span class="s">=&quot;usb&quot;, ENV{DEVTYPE}==&quot;usb_device&quot;, ACTION==&quot;add&quot;, SYSFS{idVendor}==&quot;1941&quot;, SYSFS{idProduct}==&quot;8021&quot;, GROUP=&quot;plugdev&quot;, MODE=&quot;0660&quot;</span>
+<span class="na">SUBSYSTEM</span><span class="o">=</span><span class="s">=&quot;usb&quot;, ENV{DEVTYPE}==&quot;usb_device&quot;, ACTION==&quot;add&quot;, SYSFS{idVendor}==&quot;0a81&quot;, SYSFS{idProduct}==&quot;0701&quot;, GROUP=&quot;plugdev&quot;, MODE=&quot;0660&quot;</span>
+<span class="na">SUBSYSTEM</span><span class="o">=</span><span class="s">=&quot;usb&quot;, ENV{DEVTYPE}==&quot;usb_device&quot;, ACTION==&quot;add&quot;, SYSFS{idVendor}==&quot;1130&quot;, SYSFS{idProduct}==&quot;0202&quot;, GROUP=&quot;plugdev&quot;, MODE=&quot;0660&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ udevadm montor
+</pre></div>
+</div>
+<p>でUSBミサイルランチャーのデバイスをチェック。今回は /dev/bus/usb/003/006 のようだ。</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ sudo udevadm <span class="nb">test</span> <span class="k">$(</span>udevadm info -n /dev/bus/usb/003/006 -q path<span class="k">)</span>
+</pre></div>
+</div>
+<p>上記ruleがちゃんと読み込まれているかどうかチェック。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(前略)
+/etc/udev/rules.d/40-rocketlauncher.rules:1 Invalid key &#39;SYSFS&#39;
+/etc/udev/rules.d/40-rocketlauncher.rules:2 Invalid key &#39;SYSFS&#39;
+/etc/udev/rules.d/40-rocketlauncher.rules:3 Invalid key &#39;SYSFS&#39;
+(後略)
+</pre></div>
+</div>
+<p>あかん。コケとる。</p>
+<p>どう設定すればいいのでしょう？</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>$ udevadm info -a -p <span class="k">$(</span>udevadm info -q path -n /dev/bus/usb/003/006<span class="k">)</span>
+looking at device <span class="s1">&#39;/devices/pci0000:00/0000:00:14.0/usb3/3-2&#39;</span>:
+    <span class="nv">KERNEL</span><span class="o">==</span><span class="s2">&quot;3-2&quot;</span>
+    <span class="nv">SUBSYSTEM</span><span class="o">==</span><span class="s2">&quot;usb&quot;</span>
+    <span class="nv">DRIVER</span><span class="o">==</span><span class="s2">&quot;usb&quot;</span>
+    ATTR<span class="o">{</span>version<span class="o">}==</span><span class="s2">&quot; 1.10&quot;</span>
+    ATTR<span class="o">{</span>devpath<span class="o">}==</span><span class="s2">&quot;2&quot;</span>
+    ATTR<span class="o">{</span>quirks<span class="o">}==</span><span class="s2">&quot;0x0&quot;</span>
+    ATTR<span class="o">{</span>bDeviceClass<span class="o">}==</span><span class="s2">&quot;00&quot;</span>
+    ATTR<span class="o">{</span>bNumInterfaces<span class="o">}==</span><span class="s2">&quot; 1&quot;</span>
+<span class="hll">    ATTR<span class="o">{</span>idVendor<span class="o">}==</span><span class="s2">&quot;0a81&quot;</span>
+</span>    ATTR<span class="o">{</span>speed<span class="o">}==</span><span class="s2">&quot;1.5&quot;</span>
+    ATTR<span class="o">{</span>avoid_reset_quirk<span class="o">}==</span><span class="s2">&quot;0&quot;</span>
+    ATTR<span class="o">{</span>urbnum<span class="o">}==</span><span class="s2">&quot;10&quot;</span>
+    ATTR<span class="o">{</span>authorized<span class="o">}==</span><span class="s2">&quot;1&quot;</span>
+    ATTR<span class="o">{</span>ltm_capable<span class="o">}==</span><span class="s2">&quot;no&quot;</span>
+    ATTR<span class="o">{</span>configuration<span class="o">}==</span><span class="s2">&quot;&quot;</span>
+    ATTR<span class="o">{</span>tx_lanes<span class="o">}==</span><span class="s2">&quot;1&quot;</span>
+    ATTR<span class="o">{</span>bDeviceProtocol<span class="o">}==</span><span class="s2">&quot;00&quot;</span>
+    ATTR<span class="o">{</span>bConfigurationValue<span class="o">}==</span><span class="s2">&quot;1&quot;</span>
+    ATTR<span class="o">{</span>manufacturer<span class="o">}==</span><span class="s2">&quot;Dream Link&quot;</span>
+    ATTR<span class="o">{</span>devnum<span class="o">}==</span><span class="s2">&quot;6&quot;</span>
+    ATTR<span class="o">{</span>bNumConfigurations<span class="o">}==</span><span class="s2">&quot;1&quot;</span>
+    ATTR<span class="o">{</span>bmAttributes<span class="o">}==</span><span class="s2">&quot;a0&quot;</span>
+    ATTR<span class="o">{</span>bcdDevice<span class="o">}==</span><span class="s2">&quot;0001&quot;</span>
+    ATTR<span class="o">{</span>bMaxPacketSize0<span class="o">}==</span><span class="s2">&quot;8&quot;</span>
+<span class="hll">    ATTR<span class="o">{</span>idProduct<span class="o">}==</span><span class="s2">&quot;0701&quot;</span>
+</span>    ATTR<span class="o">{</span>rx_lanes<span class="o">}==</span><span class="s2">&quot;1&quot;</span>
+    ATTR<span class="o">{</span>product<span class="o">}==</span><span class="s2">&quot;USB Missile Launcher v1.0&quot;</span>
+    ATTR<span class="o">{</span>bMaxPower<span class="o">}==</span><span class="s2">&quot;100mA&quot;</span>
+    ATTR<span class="o">{</span>maxchild<span class="o">}==</span><span class="s2">&quot;0&quot;</span>
+    ATTR<span class="o">{</span>removable<span class="o">}==</span><span class="s2">&quot;removable&quot;</span>
+    ATTR<span class="o">{</span>busnum<span class="o">}==</span><span class="s2">&quot;3&quot;</span>
+    ATTR<span class="o">{</span>bDeviceSubClass<span class="o">}==</span><span class="s2">&quot;00&quot;</span>
+</pre></div>
+</div>
+<p>ということで、SYSFS{}となっていた部分をATTR{}に修正。</p>
+</div>
 </div>
 </div>
 
